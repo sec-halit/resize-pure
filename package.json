@@ -11,8 +11,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "repository": {
-    "type": "git",
-    "url": "git://github.com/flowhalit/resize-pure.git."
+    "url": "git://github.com/flowhalit/resize-pure.git"
   },
   "author": "flowhalit",
   "license": "ISC",
