@@ -1,6 +1,6 @@
 {
   "name": "@flowhalit/resize-pure",
-  "version": "1.0.0",
+  "version": "1.0.01",
   "description": "npm install resize-pure",
   "main": "index.js",
   "scripts": {
