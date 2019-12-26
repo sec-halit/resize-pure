@@ -1,5 +1,5 @@
 {
-  "name": "resize-pure",
+  "name": "@flowhalit/resize-pure",
   "version": "1.0.0",
   "description": "npm install resize-pure",
   "main": "index.js",
@@ -32,5 +32,8 @@
   },
   "keywords": [
     "resize"
-  ]
+  ],
+  "directories": {
+    "doc": "docs"
+  }
 }
