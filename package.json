@@ -12,23 +12,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xamarinhalit/resize-pure.git"
+    "url": "git+https://github.com/flowhalit/resize-pure.git"
   },
   "author": "flowhalit",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/xamarinhalit/resize-pure/issues"
+    "url": "https://github.com/flowhalit/resize-pure/issues"
   },
-  "homepage": "https://github.com/xamarinhalit/resize-pure#readme",
+  "homepage": "https://github.com/flowhalit/resize-pure#readme",
   "devDependencies": {
     "ts-loader": "^6.2.1",
     "typescript": "^3.7.4",
     "webpack": "^4.41.4",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
-  },
-  "directories": {
-    "example": "example"
   },
   "dependencies": {
     "eslint": "^6.8.0"
