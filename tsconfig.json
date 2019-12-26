@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es5",
+      "lib": [ "es2017", "dom" ],
+      "outDir": "dist",
+      "sourceMap": true,
+      "allowJs": true,
+      "strict": true,
+      "noImplicitAny": true,
+      "moduleResolution": "classic",
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "strictPropertyInitialization": false,
+      "strictNullChecks":false
+    }
+  }

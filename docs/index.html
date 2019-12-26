@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title> Resize - pure</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="item">
+  </div>
+  <div class="item">
+  </div>
+
+  <script src="index.js"></script> 
+  <script >
+    console.log(window.ResizePure);
+   const { Resize,EventName,EventType} = window.ResizePure;
+   Resize.SetElements({
+      ne:'ne',
+      sw:'sw',
+      se:'se',
+      nw:'nw',
+      item:'.item',
+      resizer:'.resizer'
+  });
+  Resize.subscribe(EventName.touchstart,EventType.touchmoving,(data)=>{
+    console.log(EventName[EventName.touchstart],'  -  ' +EventType[EventType.touchmoving],data)
+  });
+  
+  Resize.subscribe(EventName.mouseup,EventType.moving,(data)=>{
+    console.log(EventName[EventName.mouseup],'  -  ' +EventType[EventType.moving],data)
+  });
+  Resize.subscribe(EventName.mousedown,EventType.resizing,(data)=>{
+    console.log(EventName[EventName.mousedown],'  -  ' +EventType[EventType.resizing],data)
+  });
+  Resize.subscribe(EventName.mouseup,EventType.resizing,(data)=>{
+    console.log(EventName[EventName.mouseup],'  -  ' +EventType[EventType.resizing],data)
+  });
+  </script>
+</body>
+</html>
