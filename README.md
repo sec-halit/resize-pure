@@ -1,5 +1,7 @@
 # resize-pure
 
+[Example](https://flowhalit.github.io/resize-pure/)
+
 ### .... ***has touch event***
 
 ### Install ..
