@@ -1,9 +1,13 @@
+body{
+  overscroll-behavior-y: contain;
+}
 .item{
     width:50px;
     height:50px;
     background-color:aquamarine;
     position:absolute;
   }
+
   .resizer{
     position:absolute;
     width:10px;

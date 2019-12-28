@@ -15,32 +15,50 @@ export class LResizePure implements ILResizePure {
     value: Resize;
     selected:ISelector;
 }
-
+export class q {
+    static listene (el:HTMLElement,query:string,fn:any,option:any=null){
+        el.addEventListener(query,fn,option);
+    }
+    static listen (query:string,fn:any,option:any=null){
+        window.addEventListener(query,fn,option);
+    }
+    
+    static unlisten (query:string,fn:any,option:any=null){
+        window.removeEventListener(query,fn,option);
+    }
+    static Select (query:string) : HTMLElement {
+        return document.querySelector<HTMLElement>(query);
+    }
+    static Create(query:string,fn :any,prependTo:HTMLElement = null) {
+        const el =document.createElement(query);
+        if(prependTo!=null){
+            fn?fn(el):null;
+            prependTo.appendChild(el);
+        }else{
+            fn?fn(el):null;
+        }
+        return el;
+    }
+    static SelectAll (query:string): NodeListOf<HTMLElement> {
+        return document.querySelectorAll<HTMLElement>(query);
+    }
+    static SelecteAll (el:HTMLElement,query:string): NodeListOf<HTMLElement> {
+        return el.querySelectorAll<HTMLElement>(query);
+    }
+}
 export class Resize extends BaseResize {
     private static PureList :Array<ILResizePure>=[];
     private static ResizeId :number = 0;
     private static that:Resize | null;
     private static thatList: { type: EventType; fn: any; eventname: EventName; }[] = [];
     public static SetElements(selected: ISelector){
-        document.querySelectorAll<HTMLElement>(selected.item).forEach(el =>{
+        q.SelectAll(selected.item).forEach(el =>{
             Resize.ResizeId++;
             el.dataset.resizeId="" +Resize.ResizeId;
-            const ne = document.createElement('div')
-            ne.classList.add(selected.resizer.replace('.',''))
-            ne.classList.add(selected.ne)
-            el.appendChild(ne)
-            const nw = document.createElement('div')
-            nw.classList.add(selected.resizer.replace('.',''))
-            nw.classList.add(selected.nw)
-            el.appendChild(nw)
-            const sw = document.createElement('div')
-            sw.classList.add(selected.resizer.replace('.',''))
-            sw.classList.add(selected.sw)
-            el.appendChild(sw)
-            const se = document.createElement('div')
-            se.classList.add(selected.resizer.replace('.',''))
-            se.classList.add(selected.se)
-            el.appendChild(se)
+            q.Create('div',(dv: { className: string; }) =>dv.className=selected.resizer.replace('.','')+ " "+selected.ne,el)
+            q.Create('div',(dv: { className: string; }) =>dv.className=selected.resizer.replace('.','')+ " "+selected.nw,el)
+            q.Create('div',(dv: { className: string; }) =>dv.className=selected.resizer.replace('.','')+ " "+selected.sw,el)
+            q.Create('div',(dv: { className: string; }) =>dv.className=selected.resizer.replace('.','')+ " "+selected.se,el)
             const classEl = new Resize(selected);
             classEl.resizeId=Resize.ResizeId
             classEl.element=el;
@@ -85,14 +103,17 @@ export class Resize extends BaseResize {
     private ResizingTouchStart(e: any) {
         const iz = Resize.GetValue(e.target.parentNode);
         if(iz){
-            Resize.that=iz;
+            iz.currentResizer=e.target,
+            iz.isResizing=EventType.resizing
             iz.currentResizer=e.target
             iz.isResizing = EventType.resizing;
             iz.prevX = e.touches[0].clientX;
             iz.prevY = e.touches[0].clientY;
-            window.addEventListener(EventName[EventName.touchmove],  iz.ResizingTouchmove);
-            window.addEventListener(EventName[EventName.touchend],  iz.ResizingTouchup);
-            window.addEventListener(EventName[EventName.touchcancel],  iz.ResizingTouchCancel);
+            Resize.that=iz;
+            
+            q.listen(EventName[EventName.touchmove],  iz.ResizingTouchmove,{bubles:true});
+            q.listen(EventName[EventName.touchend],  iz.ResizingTouchup,{bubles:true});
+            q.listen(EventName[EventName.touchcancel],  iz.ResizingTouchCancel,{bubles:true});
             iz.addSubscribe(EventName.touchstart,EventType.resizing);
             
         }
@@ -126,17 +147,17 @@ export class Resize extends BaseResize {
     private ResizingTouchup(ev: any) {
         const iz = Resize.that;
         iz.isResizing = EventType.default;
-        window.removeEventListener(EventName[EventName.touchmove], iz.ResizingTouchmove);
-        window.removeEventListener(EventName[EventName.touchend], iz.ResizingTouchup);
-        window.removeEventListener(EventName[EventName.touchcancel], iz.ResizingTouchCancel);
+        q.unlisten(EventName[EventName.touchmove], iz.ResizingTouchmove);
+        q.unlisten(EventName[EventName.touchend], iz.ResizingTouchup);
+        q.unlisten(EventName[EventName.touchcancel], iz.ResizingTouchCancel);
         iz.addSubscribe(EventName.touchend,EventType.resizing);
     }
     private ResizingTouchCancel(ev: any) {
         const iz = Resize.that;
         iz.isResizing = EventType.default;
-        window.removeEventListener(EventName[EventName.touchmove], iz.ResizingTouchmove);
-        window.removeEventListener(EventName[EventName.touchend], iz.ResizingTouchup);
-        window.removeEventListener(EventName[EventName.touchcancel], iz.ResizingTouchCancel);
+        q.unlisten(EventName[EventName.touchmove], iz.ResizingTouchmove);
+        q.unlisten(EventName[EventName.touchend], iz.ResizingTouchup);
+        q.unlisten(EventName[EventName.touchcancel], iz.ResizingTouchCancel);
         iz.addSubscribe(EventName.touchend,EventType.resizing);
     }
     private ResizingMousedown(e: any) {
@@ -148,8 +169,8 @@ export class Resize extends BaseResize {
             iz.prevX = e.clientX;
             iz.prevY = e.clientY;
             iz.currentEventName=EventName.mousedown;
-            window.addEventListener(EventName[EventName.mousemove],  iz.ResizingMousemove);
-            window.addEventListener(EventName[EventName.mouseup],  iz.ResizingMouseup);
+            q.listen(EventName[EventName.mousemove],  iz.ResizingMousemove);
+            q.listen(EventName[EventName.mouseup],  iz.ResizingMouseup);
             iz.addSubscribe(EventName.mousedown,EventType.resizing);
         }
     }
@@ -183,23 +204,33 @@ export class Resize extends BaseResize {
         const iz = Resize.that;
         iz.isResizing = EventType.default;
         iz.addSubscribe(EventName.mouseup,EventType.resizing);
-        window.removeEventListener(EventName[EventName.mousemove], iz.ResizingMousemove);
-        window.removeEventListener(EventName[EventName.mouseup], iz.ResizingMouseup);
+        q.unlisten(EventName[EventName.mousemove], iz.ResizingMousemove);
+        q.unlisten(EventName[EventName.mouseup], iz.ResizingMouseup);
     }
     private MovingTouchStart(e: any ) {
+        if(e.stopPropagation){
+            e.stopPropagation();
+        }else{
+            e.bubles=true;
+        }
         const iz = Resize.GetValue(e.target);
         if(iz  && iz.isResizing== EventType.default){
             iz.isResizing= EventType.touchmoving;
             iz.prevX = e.touches[0].clientX;
             iz.prevY = e.touches[0].clientY;
-            window.addEventListener(EventName[EventName.touchmove], iz.MovingTouchmove);
-            window.addEventListener(EventName[EventName.touchcancel],  iz.MovingTouchCancel);
-            window.addEventListener(EventName[EventName.touchend],  iz.MovingTouchEnd);
+            q.listen(EventName[EventName.touchmove], iz.MovingTouchmove);
+            q.listen(EventName[EventName.touchcancel],  iz.MovingTouchCancel);
+            q.listen(EventName[EventName.touchend],  iz.MovingTouchEnd);
             Resize.that=iz;
             iz.addSubscribe(EventName.touchstart,EventType.touchmoving);
         }
     }
     private MovingTouchmove(ev: any) {
+        if(ev.stopPropagation){
+            ev.stopPropagation();
+        }else{
+            ev.bubles=true;
+        }
         const iz = Resize.that
         if (iz  &&   iz.element != null) {
             iz.newX =  iz.prevX -ev.touches[0].clientX;
@@ -212,23 +243,33 @@ export class Resize extends BaseResize {
             iz.addSubscribe(EventName.touchmove,EventType.touchmoving);
         }
     }
-    private MovingTouchEnd(e: { target: any; }) {
+    private MovingTouchEnd(e: any) {
         const iz = Resize.that
+        if(e.stopPropagation){
+            e.stopPropagation();
+        }else{
+            e.bubles=true;
+        }
         if(iz){
             iz.isResizing= EventType.default;
-            window.removeEventListener(EventName[EventName.touchmove],iz.MovingTouchmove);
-            window.removeEventListener(EventName[EventName.touchcancel], iz.MovingTouchCancel);
-            window.removeEventListener(EventName[EventName.touchend], iz.MovingTouchEnd);
+           q.unlisten(EventName[EventName.touchmove],iz.MovingTouchmove);
+           q.unlisten(EventName[EventName.touchcancel], iz.MovingTouchCancel);
+           q.unlisten(EventName[EventName.touchend], iz.MovingTouchEnd);
             iz.addSubscribe(EventName.touchend,EventType.moving);
         }
     }
-    private MovingTouchCancel(e: { target: any; }) {
+    private MovingTouchCancel(e: any) {
         const iz = Resize.that
+        if(e.stopPropagation){
+            e.stopPropagation();
+        }else{
+            e.bubles=true;
+        }
         if(iz){
             iz.isResizing= EventType.default;
-            window.removeEventListener(EventName[EventName.touchmove],iz.MovingTouchmove);
-            window.removeEventListener(EventName[EventName.touchcancel], iz.MovingTouchCancel);
-            window.removeEventListener(EventName[EventName.touchend], iz.MovingTouchEnd);
+            q.unlisten(EventName[EventName.touchmove],iz.MovingTouchmove);
+            q.unlisten(EventName[EventName.touchcancel], iz.MovingTouchCancel);
+            q.unlisten(EventName[EventName.touchend], iz.MovingTouchEnd);
             iz.addSubscribe(EventName.touchcancel,EventType.moving);
         }
     }
@@ -239,8 +280,8 @@ export class Resize extends BaseResize {
             Resize.that=iz;
             iz.prevX = e.clientX;
             iz.prevY = e.clientY;
-            window.addEventListener(EventName[EventName.mousemove], Resize.that.MovingMousemove);
-            window.addEventListener(EventName[EventName.mouseup],  Resize.that.MovingMouseup);
+            q.listen(EventName[EventName.mousemove], Resize.that.MovingMousemove);
+            q.listen(EventName[EventName.mouseup],  Resize.that.MovingMouseup);
             iz.addSubscribe(EventName.mousedown,EventType.moving);
         }
     }
@@ -262,18 +303,17 @@ export class Resize extends BaseResize {
         if(iz){
             iz.isResizing= EventType.default;
             iz.addSubscribe(EventName.mouseup,EventType.moving);
-            window.removeEventListener(EventName[EventName.mousemove],Resize.that.MovingMousemove);
-            window.removeEventListener(EventName[EventName.mouseup], Resize.that.MovingMouseup);
+           q.unlisten(EventName[EventName.mousemove],Resize.that.MovingMousemove);
+           q.unlisten(EventName[EventName.mouseup], Resize.that.MovingMouseup);
         }
     }
     private SetListen() {
-        
         this.isResizing=EventType.default;
-        this.element?.addEventListener(EventName[EventName.mousedown], this.MovingMousedown);
-        this.element?.addEventListener(EventName[EventName.touchstart], this.MovingTouchStart,{passive: true});
-        this.element?.querySelectorAll(this.selected.resizer).forEach(resizer => {
-            resizer.addEventListener(EventName[EventName.mousedown], this.ResizingMousedown);
-            resizer.addEventListener(EventName[EventName.touchstart], this.ResizingTouchStart,{passive: true});
+        q.listene(this.element,EventName[EventName.mousedown], this.MovingMousedown);
+        q.listene(this.element,EventName[EventName.touchstart], this.MovingTouchStart,{passive: true});
+        q.SelecteAll(this.element,this.selected.resizer).forEach(resizer => {
+           q.listene(resizer,EventName[EventName.mousedown], this.ResizingMousedown);
+           q.listene(resizer,EventName[EventName.touchstart], this.ResizingTouchStart,{passive: true});
         });
     }
 }
